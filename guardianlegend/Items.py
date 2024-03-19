@@ -98,21 +98,20 @@ def get_item_count(name: str, distlevel: int) -> int:
     # option_reduced = 2
     # option_extra = 3
 
-    # non-filler item sums [83,74,54,90], left over [23,32,52,16]
+    # NOTE: There are 106 locations to place items, so each "column" here should add to 106
+    #       Other than the first column which is just a reference... 
 
     item_counts: Dict[str, List[int]] = {
         "Subweapons":    [3 ,3 ,2 ,4 ],
 
-        "Enemy Eraser":  [9 ,10,10,12],
-        "Energy Pack":   [14,22,41,4 ],
+        "Enemy Eraser":  [9 ,12,10,13],
+        "Energy Pack":   [14,20,41,2 ],
 
-        "Blue Lander":   [9 ,10,7 ,11],
+        "Blue Lander":   [9 ,10,7 ,12],
         "Attack Up":     [3 ,3, 2 ,4 ],
         "Defense Up":    [9 ,6, 5 ,8 ],
         "Rapid Fire Up": [6 ,5, 4 ,6 ],
         "Red Lander":    [9 ,10,8 ,10]
-
-
     }
 
     if item_table[name].category == "Keys":

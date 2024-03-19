@@ -28,11 +28,11 @@ class ItemDistribution(Choice):
 
 class ItemGating(Choice):
     """Determines how much offensive and defense power is needed before putting each Area in logic. 
-    Higher settings will be easier but more linear.
+    Higher settings will be easier but more likely to follow the vanilla game Area order.
 
     Low: 7 Defense, 9 Offense
     Normal: 9 Defense, 12 Offense
-    High: 11 Defense, 15 Offense
+    High: 12 Defense, 16 Offense
     
     (Note: in the Offense totals, Attack Up counts as double)"""
     display_name = "Area Gating Strength"
