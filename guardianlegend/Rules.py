@@ -128,32 +128,6 @@ def set_rules(multiworld: MultiWorld, player: int, gating: int):
     
     add_rule(multiworld.get_entrance("Area 10", player),
             lambda state: has_area_key(state, player, "Rectangle Key"))
-
-    '''
-    multiworld.get_entrance("Area 3", player).access_rule = \
-        lambda state: has_area_key(state, player, "Hook Key") and has_enough_defense(state, player, 2)
-
-    multiworld.get_entrance("Area 4", player).access_rule = \
-        lambda state: has_area_key(state, player, "Wave Key") and has_enough_defense(state, player, 3)
-    
-    multiworld.get_entrance("Area 5", player).access_rule = \
-        lambda state: has_area_key(state, player, "Square Key") and has_enough_defense(state, player, 3)
-    
-    multiworld.get_entrance("Area 6", player).access_rule = \
-        lambda state: has_area_key(state, player, "Square Key") and has_enough_defense(state, player, 4)
-    
-    multiworld.get_entrance("Area 7", player).access_rule = \
-        lambda state: has_area_key(state, player, "Cross Key") and has_enough_defense(state, player, 4)
-    
-    multiworld.get_entrance("Area 8", player).access_rule = \
-        lambda state: has_area_key(state, player, "Cross Key") and has_enough_defense(state, player, 5)
-    
-    multiworld.get_entrance("Area 9", player).access_rule = \
-        lambda state: has_area_key(state, player, "Triangle Key") and has_enough_defense(state, player, 6)
-    
-    multiworld.get_entrance("Area 10", player).access_rule = \
-        lambda state: has_area_key(state, player, "Rectangle Key") and has_enough_defense(state, player, 6)
-    '''
     
     # Shops require Area access + enough Red Landers to afford the shop
     for s_loc in [location for location in multiworld.get_locations(player) if "Shop" in location.name]:

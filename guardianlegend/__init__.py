@@ -2,13 +2,12 @@ from typing import List
 
 from BaseClasses import Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
-from Utils import visualize_regions
 from .Items import TGLItem, TGLItemData, item_table, event_item_table, get_item_count
 from .Locations import TGLLocation, location_table, event_location_table
 from .Options import TGLOptions
 from .Regions import create_regions
 from .Rules import set_rules
-from .Rom import TGLDeltaPatch, generate_output
+from .Rom import generate_output
 from .Client import TGLClient
 
 

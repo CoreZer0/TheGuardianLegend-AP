@@ -13,6 +13,7 @@ class TGLLocationData(NamedTuple):
     code: Optional[int] = None # AP Location code (ROM location offsets)
     bitflag: Optional[Tuple] = None # RAM address for item flag + bit flag offset
 
+
 def get_locations_by_category(category: str) -> Dict[str, TGLLocationData]:
     location_dict: Dict[str, TGLLocationData] = {}
     for name, data in location_table.items():
@@ -40,7 +41,7 @@ def get_locationcode_by_bitflag(bitflag: Tuple) -> int:
             return data.code
 
 
-# ID code base 8471765000 = 'TGL' in ASCII decimal + 5000
+# ID code base 8471765000 = 'TGL' in ASCII decimal
 TGL_LOCID_BASE = 8471760000
 TGL_LOCID_GROUND_BASE = TGL_LOCID_BASE + 1000
 
@@ -51,7 +52,6 @@ TGL_LOCID_GROUND_BASE = TGL_LOCID_BASE + 1000
 location_table: Dict[str, TGLLocationData] = {
     # Area 0 - 12 locs
     "A0 Corridor 1 (X6 Y10)":      TGLLocationData("Area 0",  "Corridor",  TGL_LOCID_BASE+3001, (0x9, 0x1 )),
-    #"Corridor 1 Fleepa (X6 Y10)":  TGLLocationData("Area 0",  "Corridor",  TGL_LOCID_BASE+1002),
     "A0 Corridor 1 Bonus":         TGLLocationData("Area 0",  "Corridor",  TGL_LOCID_BASE+4001),
     "A0 Crab Walker (X8 Y13)":     TGLLocationData("Area 0",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x0b, (0x1, 0x8 )),
     "A0 Headcrawler (X14 Y9)":     TGLLocationData("Area 0",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x0c, (0x1, 0x10)),
@@ -77,20 +77,17 @@ location_table: Dict[str, TGLLocationData] = {
     # Area 2 - 7 locs
     "A2 Corridor 2 (X2 Y16)":         TGLLocationData("Area 2",  "Corridor",  TGL_LOCID_BASE+3002, (0x9, 0x2 )),
     "A2 Corridor 2 Bonus":            TGLLocationData("Area 2",  "Corridor",  TGL_LOCID_BASE+4002),
-    #"Corridor 2 Crawdaddy (X2 Y16)":  TGLLocationData("Area 2",  "Corridor",  TGL_LOCID_BASE+1202),
     "A2 Corridor 12 (X4 Y15)":        TGLLocationData("Area 2",  "Corridor",  TGL_LOCID_BASE+3012, (0xA, 0x8 )),
     "A2 Corridor 12 Bonus":           TGLLocationData("Area 2",  "Corridor",  TGL_LOCID_BASE+4012, (0xA, 0x8 )),
     "A2 Claw Launcher (X5 Y17)":      TGLLocationData("Area 2",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x0f, (0x1, 0x80)),
     "A2 Crab Walker (X1 Y14)":        TGLLocationData("Area 2",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x10, (0x2, 0x1 )),
     "A2 (X2 Y17)":                    TGLLocationData("Area 2",  "Ground",    TGL_LOCID_GROUND_BASE+0x36, (0x6, 0x40)),
     "A2 (X3 Y14)":                    TGLLocationData("Area 2",  "Ground",    TGL_LOCID_GROUND_BASE+0x25, (0x4, 0x20)),
-    "A2 150 Chip Shop A (X1 Y18)":    TGLLocationData("Area 2",  "Shop",      TGL_LOCID_BASE+2102, (0x7, 0x80)),
-    #"A2 150 Chip Shop B (X1 Y18)":    TGLLocationData("Area 2",  "Shop",      TGL_LOCID_BASE+1222),
+    "A2 150 Chip Shop (X1 Y18)":    TGLLocationData("Area 2",  "Shop",      TGL_LOCID_BASE+2102, (0x7, 0x80)),
 
     # Area 3 - 6 locs
     "A3 Corridor 3 (X4 Y20)":         TGLLocationData("Area 3",  "Corridor",  TGL_LOCID_BASE+3003, (0x9, 0x4 )),
     "A3 Corridor 3 Bonus":            TGLLocationData("Area 3",  "Corridor",  TGL_LOCID_BASE+4003),
-    #"Corridor 3 Optomon (X4 Y20)":    TGLLocationData("Area 3",  "Corridor",  TGL_LOCID_BASE+1302),
     "A3 Corridor 13 (X5 Y20)":        TGLLocationData("Area 3",  "Corridor",  TGL_LOCID_BASE+3013, (0xA, 0x10)),
     "A3 Corridor 13 Bonus":           TGLLocationData("Area 3",  "Corridor",  TGL_LOCID_BASE+4013),
     "A3 HeadCrawler (X1 Y20)":        TGLLocationData("Area 3",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x11, (0x2, 0x2 )),
@@ -101,7 +98,6 @@ location_table: Dict[str, TGLLocationData] = {
     # Area 4 - 8 locs
     "A4 Corridor 4 (X20 Y0)":         TGLLocationData("Area 4",  "Corridor",  TGL_LOCID_BASE+3004, (0x9, 0x8 )),
     "A4 Corridor 4 Bonus":            TGLLocationData("Area 4",  "Corridor",  TGL_LOCID_BASE+4004),
-    #"Corridor 4 Teramute (X20 Y0)":   TGLLocationData("Area 4",  "Corridor",  TGL_LOCID_BASE+1402),
     "A4 Corridor 14 (X17 Y4)":        TGLLocationData("Area 4",  "Corridor",  TGL_LOCID_BASE+3014, (0xA, 0x20)),
     "A4 Corridor 14 Bonus":           TGLLocationData("Area 4",  "Corridor",  TGL_LOCID_BASE+4014),
     "A4 Crab Walker (X16 Y3)":        TGLLocationData("Area 4",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x13, (0x2, 0x8 )),
@@ -109,8 +105,7 @@ location_table: Dict[str, TGLLocationData] = {
     "A4 (X19 Y6)":                    TGLLocationData("Area 4",  "Ground",    TGL_LOCID_GROUND_BASE+0x29, (0x5, 0x2 )),
     "A4 (X17 Y2)":                    TGLLocationData("Area 4",  "Ground",    TGL_LOCID_GROUND_BASE+0x2a, (0x5, 0x4 )),
     "A4 (X16 Y0)":                    TGLLocationData("Area 4",  "Ground",    TGL_LOCID_GROUND_BASE+0x37, (0x6, 0x80)),
-    "A4 400 Chip Shop A (X18 Y0)":    TGLLocationData("Area 4",  "Shop",      TGL_LOCID_BASE+2112, (0x8, 0x2 )),
-    #"A4 400 Chip Shop B (X18 Y0)":    TGLLocationData("Area 4",  "Shop",      TGL_LOCID_BASE+1422),
+    "A4 400 Chip Shop (X18 Y0)":    TGLLocationData("Area 4",  "Shop",      TGL_LOCID_BASE+2112, (0x8, 0x2 )),
 
     # Area 5 - 7 locs
     "A5 Corridor 5 (X23 Y4)":         TGLLocationData("Area 5",  "Corridor",  TGL_LOCID_BASE+3005, (0x9, 0x10)),
@@ -126,7 +121,6 @@ location_table: Dict[str, TGLLocationData] = {
     # Area 6 - 8 locs
     "A6 Corridor 6 (X16 Y11)":        TGLLocationData("Area 6",  "Corridor",  TGL_LOCID_BASE+3006, (0x9, 0x20)),
     "A6 Corridor 6 Bonus":            TGLLocationData("Area 6",  "Corridor",  TGL_LOCID_BASE+4006),
-    #"Corridor 6 Glider (X16 Y11)":    TGLLocationData("Area 6",  "Corridor",  TGL_LOCID_BASE+1602),
     "A6 Corridor 16 (X18 Y13)":       TGLLocationData("Area 6",  "Corridor",  TGL_LOCID_BASE+3016, (0xA, 0x80)),
     "A6 Corridor 16 Bonus":           TGLLocationData("Area 6",  "Corridor",  TGL_LOCID_BASE+4016),
     "A6 Headcrawler (X18 Y10)":       TGLLocationData("Area 6",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x17, (0x2, 0x80)),
@@ -146,15 +140,12 @@ location_table: Dict[str, TGLLocationData] = {
     "A7 (X17 Y23)":                   TGLLocationData("Area 7",  "Ground",    TGL_LOCID_GROUND_BASE+0x03, (0x0, 0x8 )),
     "A7 (X22 Y23)":                   TGLLocationData("Area 7",  "Ground",    TGL_LOCID_GROUND_BASE+0x30, (0x6, 0x1 )),
     "A7 (X19 Y19)":                   TGLLocationData("Area 7",  "Ground",    TGL_LOCID_GROUND_BASE+0x2f, (0x5, 0x80)),
-    "A7 1000 Chip Shop A (X23 Y21)":  TGLLocationData("Area 7",  "Shop",      TGL_LOCID_BASE+2107, (0x8, 0x1 )),
-    #"A7 1000 Chip Shop B (X23 Y21)":  TGLLocationData("Area 7",  "Shop",      TGL_LOCID_BASE+1722),
-    "A7 600 Chip Shop A (X15 Y12)":   TGLLocationData("Area 7",  "Shop",      TGL_LOCID_BASE+2117, (0x8, 0x4 )),
-    #"A7 600 Chip Shop B (X15 Y12)":   TGLLocationData("Area 7",  "Shop",      TGL_LOCID_BASE+1724),
+    "A7 1000 Chip Shop (X23 Y21)":  TGLLocationData("Area 7",  "Shop",      TGL_LOCID_BASE+2107, (0x8, 0x1 )),
+    "A7 600 Chip Shop (X15 Y12)":   TGLLocationData("Area 7",  "Shop",      TGL_LOCID_BASE+2117, (0x8, 0x4 )),
 
     # Area 8 - 8 locs
     "A8 Corridor 8 (X10 Y16)":        TGLLocationData("Area 8",  "Corridor",  TGL_LOCID_BASE+3008, (0x9, 0x80)),
     "A8 Corridor 8 Bonus":            TGLLocationData("Area 8",  "Corridor",  TGL_LOCID_BASE+4008),
-    #"Corridor 8 Grimgrin (X10 Y16)":  TGLLocationData("Area 8",  "Corridor",  TGL_LOCID_BASE+1802),
     "A8 Corridor 18 (X11 Y19)":       TGLLocationData("Area 8",  "Corridor",  TGL_LOCID_BASE+3018, (0xB, 0x2 )),
     "A8 Corridor 18 Bonus":           TGLLocationData("Area 8",  "Corridor",  TGL_LOCID_BASE+4018),
     "A8 Leech Flower (X12 Y18)":      TGLLocationData("Area 8",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x1b, (0x3, 0x8 )),
@@ -167,7 +158,6 @@ location_table: Dict[str, TGLLocationData] = {
     # Area 9 - 9 locs
     "A9 Corridor 9 (X2 Y2)":          TGLLocationData("Area 9",  "Corridor",  TGL_LOCID_BASE+3009, (0xA, 0x1 )),
     "A9 Corridor 9 Bonus":            TGLLocationData("Area 9",  "Corridor",  TGL_LOCID_BASE+4009),
-    #"Corridor 9 Eyegore (X2 Y2)":     TGLLocationData("Area 9",  "Corridor",  TGL_LOCID_BASE+1902),
     "A9 Corridor 19 (X4 Y4)":         TGLLocationData("Area 9",  "Corridor",  TGL_LOCID_BASE+3019, (0xB, 0x4 )),
     "A9 Corridor 19 Bonus":           TGLLocationData("Area 9",  "Corridor",  TGL_LOCID_BASE+4019),
     "A9 Crab Walker (X5 Y3)":         TGLLocationData("Area 9",  "Miniboss",  TGL_LOCID_GROUND_BASE+0x1d, (0x3, 0x20)),
@@ -186,8 +176,7 @@ location_table: Dict[str, TGLLocationData] = {
     "A10 Dino Skull (X11 Y3)":         TGLLocationData("Area 10", "Miniboss",  TGL_LOCID_GROUND_BASE+0x1f, (0x3, 0x80)),
     "A10 Glider (X12 Y0)":             TGLLocationData("Area 10", "Miniboss",  TGL_LOCID_GROUND_BASE+0x20, (0x4, 0x1 )),
     "A10 (X12 Y4)":                    TGLLocationData("Area 10", "Ground",    TGL_LOCID_GROUND_BASE+0x09, (0x1, 0x2 )),
-    "A10 2000 Chip Shop A (X12 Y5)":   TGLLocationData("Area 10", "Shop",      TGL_LOCID_BASE+2122, (0x8, 0x8 )),
-    #"A10 2000 Chip Shop B (X12 Y5)":   TGLLocationData("Area 10", "Shop",      TGL_LOCID_BASE+2022),
+    "A10 2000 Chip Shop (X12 Y5)":   TGLLocationData("Area 10", "Shop",      TGL_LOCID_BASE+2122, (0x8, 0x8 )),
     
 }
 

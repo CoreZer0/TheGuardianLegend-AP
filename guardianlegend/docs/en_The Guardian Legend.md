@@ -20,7 +20,7 @@ All locations with one-time-only items are shuffled. More formally:
 - Stat upgrades for attack power, defense power, and firing speed
 - Keys for accessing later Areas
 
-## What does another world's item look like in The Legend of Zelda?
+## What does another world's item look like in The Guardian Legend?
 
 Items from other games will look like a Red Chip. Note that only static items (item boxes in rooms, and miniboss drops)
 are shuffled. Enemies will still drop the regular Red Chip items and these are not part of Archipelago.
