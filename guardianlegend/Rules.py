@@ -5,16 +5,20 @@ from worlds.generic.Rules import add_rule, set_rule
 
 from .Items import red_lander_thresholds
 
+
 # Currently this compares to a hardcoded list of Max chip values as in the vanilla game,
 #  based on the current amount of Red Landers collected.
 def get_chip_max(state: CollectionState, player: int) -> int:
     return red_lander_thresholds[state.count("Red Lander", player)]
 
+
 def has_area_key(state: CollectionState, player: int, keyname: str) -> bool:
     return state.has(keyname, player)
 
+
 def has_enough_defense(state: CollectionState, player: int, threshold: int) -> bool:
     return min(state.count("Defense Up", player), 6) + state.count("Blue Lander", player) >= threshold
+
 
 def has_enough_offense(state: CollectionState, player: int, threshold: int) -> bool:
     # Attack Up counts for double value to increase likelihood it shows up in logic
@@ -43,12 +47,14 @@ def has_enough_chips(state: CollectionState, player: int, shopname: str) -> bool
 def has_multibullets(state: CollectionState, player: int) -> bool:
     return state.count("Multibullets", player) >= 1
 '''
-    
+
+
 def has_final_boss_access(state: CollectionState, player: int) -> bool:
     all_cleared = True
-    for i in range(1,11):
+    for i in range(1, 11):
         all_cleared &= state.has("Corridor " + str(i) + " Cleared", player)
     return all_cleared
+
 
 ''' # Testing offense/defense split, leaving for reference
 stats_gating_table: Dict[int, List[int]] = {
@@ -69,6 +75,7 @@ defense_gating_table: Dict[int, List[int]] = {
     1: [1,2,3,4,5,6,7,8 ,9 ],
     2: [1,2,3,4,6,7,9,11,12]
 }
+
 
 offense_gating_table: Dict[int, List[int]] = {
     0: [1,2,3,4,5,6 ,7 ,8 ,9 ],
@@ -99,35 +106,35 @@ def set_rules(multiworld: MultiWorld, player: int, gating: int):
         '''
         
         set_rule(multiworld.get_entrance(areaname, player),
-                 lambda state, n=i: (has_enough_defense(state, player, defense_gating_table[gating][n]))
-                       and (has_enough_offense(state, player, offense_gating_table[gating][n])))
+                 lambda state, n=i: (has_enough_defense(state, player, defense_gating_table[gating][n])) 
+                                     and (has_enough_offense(state, player, offense_gating_table[gating][n])))
     
     add_rule(multiworld.get_entrance("Area 2", player),
-            lambda state: has_area_key(state, player, "Crescent Key"))
+             lambda state: has_area_key(state, player, "Crescent Key"))
     
     add_rule(multiworld.get_entrance("Area 3", player),
-            lambda state: has_area_key(state, player, "Hook Key"))
+             lambda state: has_area_key(state, player, "Hook Key"))
     
     add_rule(multiworld.get_entrance("Area 4", player),
-            lambda state: has_area_key(state, player, "Wave Key"))
+             lambda state: has_area_key(state, player, "Wave Key"))
     
     add_rule(multiworld.get_entrance("Area 5", player),
-            lambda state: has_area_key(state, player, "Square Key"))
+             lambda state: has_area_key(state, player, "Square Key"))
     
     add_rule(multiworld.get_entrance("Area 6", player),
-            lambda state: has_area_key(state, player, "Square Key"))
+             lambda state: has_area_key(state, player, "Square Key"))
     
     add_rule(multiworld.get_entrance("Area 7", player),
-            lambda state: has_area_key(state, player, "Cross Key"))
+             lambda state: has_area_key(state, player, "Cross Key"))
     
     add_rule(multiworld.get_entrance("Area 8", player),
-            lambda state: has_area_key(state, player, "Cross Key"))
+             lambda state: has_area_key(state, player, "Cross Key"))
     
     add_rule(multiworld.get_entrance("Area 9", player),
-            lambda state: has_area_key(state, player, "Triangle Key"))
+             lambda state: has_area_key(state, player, "Triangle Key"))
     
     add_rule(multiworld.get_entrance("Area 10", player),
-            lambda state: has_area_key(state, player, "Rectangle Key"))
+             lambda state: has_area_key(state, player, "Rectangle Key"))
     
     # Shops require Area access + enough Red Landers to afford the shop
     for s_loc in [location for location in multiworld.get_locations(player) if "Shop" in location.name]:

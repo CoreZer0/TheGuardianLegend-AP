@@ -29,11 +29,9 @@ class TGLWorld(World):
     """THE GUARDIAN LEGEND (NES 1988, Irem/Compile)"""
 
     game = "The Guardian Legend"
-    #data_version = 3
     web = TGLWebWorld()
     options_dataclass = TGLOptions
     options: TGLOptions
-    #topology_present = True # show path to required location checks in spoiler
     
     location_name_to_id = {name: data.code for name, data in location_table.items()}
     item_name_to_id = {name: data.code for name, data in item_table.items()}
@@ -77,5 +75,5 @@ class TGLWorld(World):
         self.multiworld.itempool += item_pool
 
     def generate_output(self, output_directory: str) -> None:
-        generate_output(self.multiworld, self.player, output_directory, self.options)
+        generate_output(self, output_directory, self.options)
     

@@ -17,10 +17,10 @@
 # A. This is a .yaml file. You are allowed to use most characters.
 #    To test if your yaml is valid or not, you can use this website:
 #        http://www.yamllint.com/
-#    You can also verify your Archipelago settings are valid at this site:
+#    You can also verify that your Archipelago options are valid at this site:
 #        https://archipelago.gg/check
 
-# Your name in-game. Spaces will be replaced with underscores and there is a 16-character limit.
+# Your name in-game, limited to 16 characters.
 #     {player} will be replaced with the player's slot number.
 #     {PLAYER} will be replaced with the player's slot number, if that slot number is greater than 1.
 #     {number} will be replaced with the counter value of the name.
@@ -32,7 +32,7 @@ description: Default The Guardian Legend Template
 
 game: The Guardian Legend
 requires:
-  version: 0.4.4 # Version of Archipelago required for this yaml to work as expected.
+  version: 0.4.5 # Version of Archipelago required for this yaml to work as expected.
 
 The Guardian Legend:
   progression_balancing:
@@ -114,13 +114,27 @@ The Guardian Legend:
 
   item_gating:
     # Determines how much offensive and defense power is needed before putting each Area in logic. 
-    # Higher settings will be easier but more linear.
+    # Higher settings will be easier but more likely to follow the vanilla game Area order.
     # 
     # Low: 7 Defense, 9 Offense
     # Normal: 9 Defense, 12 Offense
-    # High: 11 Defense, 15 Offense
+    # High: 12 Defense, 16 Offense
     # 
     # (Note: in the Offense totals, Attack Up counts as double)
     low: 0
     normal: 50
     high: 0
+
+  corridor_hints:
+    # The rooms that normally explain how to open Corridor 1-10 will instead have hints for
+    # the classification of items in Corridor 11-20. Choose how many Corridors receive hints.
+    # (If less than 10 is chosen, hinted corridors will be randomly selected.)
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 10
+    random: 0
+    random-low: 0
+    random-high: 0
+    none: 0 # equivalent to 0
+    all: 50 # equivalent to 10

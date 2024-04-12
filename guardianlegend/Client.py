@@ -3,34 +3,29 @@ from typing import TYPE_CHECKING, List, Tuple
 from NetUtils import ClientStatus
 import worlds._bizhawk as bizhawk
 from worlds._bizhawk.client import BizHawkClient
-from .Items import TGLItem, TGLItemData, red_lander_thresholds, TGL_ITEMID_BASE, get_itemname_by_id
-from .Locations import TGLLocation, TGLLocationData, TGL_LOCID_BASE, get_locationcode_by_bitflag
+from .Items import red_lander_thresholds, TGL_ITEMID_BASE, get_itemname_by_id
+from .Locations import TGL_LOCID_BASE, get_locationcode_by_bitflag
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientContext
 
-# Everything here shamelessly adapted from Pokemon Emerald :)
+# Almost everything here shamelessly adapted from Pokemon Emerald :)
 
-#TODO: Figure this out
-EXPECTED_ROM_NAME = "TGL AP Hack"
 ROM_CHIP_MAX = 0x87E6
 ROM_RAPID_FIRE_LEVELS = 0x87CE
 
-# RAM Address list
+## RAM Address list
 
 # 0x0178-0x017b *appear* to be unused
-
-RAM_ITEMS_RECEIVED = 0x17a # ctx.items_received index
-
-RAM_KEYS_RECEIVED = 0x17b # Remote Key items as sent by AP, in case in game value gets changed
+RAM_ITEMS_RECEIVED = 0x17a  # ctx.items_received index
+RAM_KEYS_RECEIVED = 0x17b   # Remote Key items as sent by AP, in case in game value gets changed
 
 # RAM Address for item locations grabbed bitmap (4A0-4A8, exact values stored in TGLLocationData)
 RAM_LOCATIONS_CHECKED = 0x4A0
 
 # RAM Address for cleared corridor bitmap (1-20 sequence over 3 bytes)
 RAM_CORRIDORS_CLEARED = 0x4A9
-
-RAM_CORRIDORS_OPENED = 0x4B1 # 2 bytes
+RAM_CORRIDORS_OPENED = 0x4B1  # 2 bytes
 
 # RAM Address for Subweapon levels (0-3 levels per weapon, 2 bits per weapon over 3 bytes)
 RAM_SUBWEAPON_LEVELS = 0x4AC
@@ -39,10 +34,9 @@ RAM_SUBWEAPON_LEVELS = 0x4AC
 RAM_KEYS_INGAME = 0x4B0
 
 RAM_EE_COUNT = 0x4AF
-
 RAM_RED_LANDER_COUNT = 0x46
-RAM_CURRENT_CHIPS = 0x4C # 2 bytes
-RAM_MAX_CHIPS = 0x4E # 2 bytes
+RAM_CURRENT_CHIPS = 0x4C   # 2 bytes
+RAM_MAX_CHIPS = 0x4E       # 2 bytes
 
 RAM_MAX_HEALTH = 0x47
 RAM_CURRENT_HEALTH = 0x48
@@ -55,7 +49,8 @@ RAM_SHOT_SPEED = 0x39
 RAM_GAME_STATE = 0x30
 RAM_ROOM_NUMBER = 0x51
 RAM_MUSIC_ID = 0x3DD
-RAM_ENDING_FLAG = 0x1FF # usually this is 0xFF, but 0x82 in sound check and 0x8B during ending
+RAM_ENDING_FLAG = 0x1FF  # usually this is 0xFF, but 0x82 in sound check and 0x8B during ending
+
 
 class TGLClient(BizHawkClient):
     game = "The Guardian Legend"
@@ -65,7 +60,6 @@ class TGLClient(BizHawkClient):
     opened_corridors: bool
     message_interval_set: bool
     
-
     def __init__(self) -> None:
         super().__init__()
         self.opened_corridors = False
@@ -73,8 +67,6 @@ class TGLClient(BizHawkClient):
 
     async def validate_rom(self, ctx: "BizHawkClientContext") -> bool:
         from CommonClient import logger
-
-        # TODO: Everything
         
         try:
             # Currently validating ROM against the first 4 bytes in the MAX CHIPs table
@@ -84,10 +76,10 @@ class TGLClient(BizHawkClient):
                 ctx.bizhawk_ctx,
                 [(ROM_CHIP_MAX, 4, "PRG ROM")]
             )
-            # reading as one long number in byte order, so need big-endian in this caw
+            # reading as one long number in byte order, so need big-endian in this case
             rom_valid_num = int.from_bytes(rom_valid_bytes[0], 'big')
             if not rom_valid_num == 0xA00F7017:
-                logger.info("ERROR: This is not a valid The Guardian Legend ROM file.")
+                #logger.info("ERROR: This is not a valid The Guardian Legend ROM file.")
                 return False
         except bizhawk.RequestFailedError:
             return False
@@ -97,12 +89,11 @@ class TGLClient(BizHawkClient):
 
         return True
 
-
     async def game_watcher(self, ctx: "BizHawkClientContext") -> None:
         
         # main watch loop
         try:
-            # Check it's safe to receive items (probably just in game, not on title screen or save room?)
+            # Check it's safe to receive items (any time not on title screen/demo mode/sound check)
             # - Music Player channel ids (0x03DD-0x3DF), should be 01 on title only
             # - The game state bitflags (0x0030) set bit 8 (0x80) for demo mode
             # - And there's a sound check so we need to make sure we're not in that either
@@ -167,16 +158,16 @@ class TGLClient(BizHawkClient):
                 # location id in 4000s indicated bonus corridor item that also needs to be handled
                 item_loc = ctx.items_received[num_new_items].location
                 is_special_item = (item_loc < 0) or (item_loc - TGL_LOCID_BASE >= 4000) 
-                next_item_type:Tuple = divmod(next_item_id - TGL_ITEMID_BASE, 1000)
+                next_item_type: Tuple = divmod(next_item_id - TGL_ITEMID_BASE, 1000)
 
                 # Determine how to handle the item based on type:
                 if (next_item_type[0] == 1) and (is_remote_item or is_special_item):
                     ap_item_message = f"AP: You received your {get_itemname_by_id(next_item_id)}!"
                     await bizhawk.display_message(ctx.bizhawk_ctx, ap_item_message)
                     
-                    # Drop item
-                    # Subweapons are 2 bits per, stored over 3 bytes - need to add 1 level if less than 3 total
                     if next_item_type[1] <= 10:
+                        # Drop item
+                        # Subweapons are 2 bits per, stored over 3 bytes - need to add 1 level if less than 3 total
                         item_index = next_item_type[1] * 2
                         item_mask = 0b11 << item_index
                         read_item_bytes = await bizhawk.read(
@@ -213,7 +204,7 @@ class TGLClient(BizHawkClient):
                         has_ee = ((itemlevel_bytes & item_mask) == item_mask)
                         set_ee = itemlevel_bytes
                         if not has_ee:
-                             set_ee += item_mask
+                            set_ee += item_mask
                         granted_item = await bizhawk.guarded_write(
                             ctx.bizhawk_ctx,
                             [
@@ -235,8 +226,8 @@ class TGLClient(BizHawkClient):
                         granted_item = await bizhawk.guarded_write(
                             ctx.bizhawk_ctx,
                             [
-                                (RAM_MAX_HEALTH, max_health.to_bytes(1,'little'), "RAM"),
-                                (RAM_CURRENT_HEALTH, max_health.to_bytes(1,'little'), "RAM")
+                                (RAM_MAX_HEALTH, max_health.to_bytes(1, 'little'), "RAM"),
+                                (RAM_CURRENT_HEALTH, max_health.to_bytes(1, 'little'), "RAM")
                             ],
                             [(RAM_MAX_HEALTH, read_item_bytes[0], "RAM")]
                         )
@@ -311,7 +302,7 @@ class TGLClient(BizHawkClient):
                             granted_item = await bizhawk.guarded_write(
                                 ctx.bizhawk_ctx,
                                 [
-                                    (RAM_RED_LANDER_COUNT, red_lander_count.to_bytes(1,'little'), "RAM"),
+                                    (RAM_RED_LANDER_COUNT, red_lander_count.to_bytes(1, 'little'), "RAM"),
                                     (RAM_MAX_CHIPS, chip_max.to_bytes(2, 'little'), "RAM"),
                                     (RAM_CURRENT_CHIPS, chip_max.to_bytes(2, 'little'), "RAM")
                                 ],
@@ -363,6 +354,7 @@ class TGLClient(BizHawkClient):
                 )
             # Area Key overwrite failsafe
             # Overwrite key flags in case the game gives us a key before AP thinks we should have it
+            # NOTE: With YOU GOT KEY code skipped this is probably unneeded
             read_key_data = await bizhawk.read(
                 ctx.bizhawk_ctx,
                 [
@@ -389,7 +381,7 @@ class TGLClient(BizHawkClient):
             corridor_flag_bits = int.from_bytes(read_location_flags[1], 'little')
             # Figure out what the new locations are, send to AP
             for i in range(68):
-                if (location_flag_bits & (1 << i)) !=0:
+                if (location_flag_bits & (1 << i)) != 0:
                     locbits = divmod(i, 8)
                     locid = get_locationcode_by_bitflag((locbits[0], 1 << locbits[1]))
                     if locid not in ctx.checked_locations:
@@ -399,7 +391,7 @@ class TGLClient(BizHawkClient):
             # Corridors 1-20
             # Send 2 location IDs per corridor, one is a bonus item for game balance 
             for j in range(20):
-                if (corridor_flag_bits & (1 << j)) !=0:
+                if (corridor_flag_bits & (1 << j)) != 0:
                     locbits = divmod(j, 8)
                     locid = get_locationcode_by_bitflag((locbits[0] + 9, 1 << locbits[1]))
                     locid_bonus = locid + 1000

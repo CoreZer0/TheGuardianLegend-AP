@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from Options import DefaultOnToggle, Toggle, Choice, DeathLink, PerGameCommonOptions
+from Options import DefaultOnToggle, Choice, NamedRange, DeathLink, PerGameCommonOptions
+
 
 class BalancedRapidFire(DefaultOnToggle):
     """Makes the upgrade power of Rapid Fire more evenly distributed, and gives a slightly faster starting speed.
@@ -8,6 +9,7 @@ class BalancedRapidFire(DefaultOnToggle):
     True: 10/8/6/4/2/1 frames per shot.
     False: 12/5/4/3/2/1 frames per shot (vanilla behavior)."""
     display_name = "Balanced Rapid Fire"
+
 
 class ItemDistribution(Choice):
     """Determines how many copies of items and upgrades exist in the item pool. 
@@ -41,15 +43,33 @@ class ItemGating(Choice):
     option_high = 2
     default = 1
 
+
+class CorridorHints(NamedRange):
+    """The rooms that normally explain how to open Corridor 1-10 will instead have hints for
+    the classification of items in Corridor 11-20. Choose how many Corridors receive hints.
+    (If less than 10 is chosen, hinted corridors will be randomly selected.)"""
+    display_name = "Corridor 11-20 Hints"
+    range_start = 0
+    range_end = 10
+    special_range_names = {
+        "none": 0,
+        "all": 10
+    }
+    default: 10
+
+
 '''
 class LimitedSubweapons(Toggle):
     """An extra challenge! A random set of subweapons will be excluded from the pool entirely."""
     pass
 '''
 
+
 @dataclass
 class TGLOptions(PerGameCommonOptions):
     balanced_rapid_fire: BalancedRapidFire
     item_distribution: ItemDistribution
     item_gating: ItemGating
+    corridor_hints: CorridorHints
     # death_link: DeathLink
+    

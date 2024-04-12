@@ -1,7 +1,8 @@
 from typing import Dict, List, NamedTuple, Optional
 
 from BaseClasses import MultiWorld, Region, Entrance
-from .Locations import TGLLocation, location_table, get_locations_by_category, get_locations_by_areanum
+from .Locations import TGLLocation, location_table, get_locations_by_areanum
+
 
 class TGLRegionData(NamedTuple):
     locations: Optional[List[str]]
@@ -27,7 +28,7 @@ def create_regions(multiworld: MultiWorld, player: int):
     }
 
     # Fill regions by Area number
-    for areanum in range (0,11):
+    for areanum in range(0, 11):
         areaname = "Area " + str(areanum)
         for locname in get_locations_by_areanum(areaname).keys():
             regions[areaname].locations.append(locname)
@@ -52,6 +53,7 @@ def create_regions(multiworld: MultiWorld, player: int):
     multiworld.get_entrance("Area 10", player).connect(multiworld.get_region("Area 10", player))
     multiworld.get_entrance("Corridor 21", player).connect(multiworld.get_region("Corridor 21", player))
 
+
 def create_region(multiworld: MultiWorld, player: int, name: str, data: TGLRegionData):
     region = Region(name, player, multiworld)
     if data.locations:
@@ -61,8 +63,8 @@ def create_region(multiworld: MultiWorld, player: int, name: str, data: TGLRegio
             region.locations.append(location)
 
     if data.region_exits:
-        for exit in data.region_exits:
-            entrance = Entrance(player, exit, region)
+        for region_exit in data.region_exits:
+            entrance = Entrance(player, region_exit, region)
             region.exits.append(entrance)
 
     return region

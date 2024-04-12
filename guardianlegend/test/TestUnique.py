@@ -2,8 +2,8 @@ from typing import Dict
 
 from . import TGLTestBase
 
-from worlds.guardianlegend.Items import TGLItemData, item_table
-from worlds.guardianlegend.Locations import TGLLocationData, location_table
+from worlds.guardianlegend.Items import item_table
+from worlds.guardianlegend.Locations import location_table
 
 
 class UniqueTest(TGLTestBase):

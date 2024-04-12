@@ -1,6 +1,6 @@
 from typing import Dict, NamedTuple, Optional, Tuple
 
-from BaseClasses import Location, MultiWorld
+from BaseClasses import Location
 
 
 class TGLLocation(Location):
@@ -8,10 +8,10 @@ class TGLLocation(Location):
 
 
 class TGLLocationData(NamedTuple):
-    areanum: str # In-game Area number
-    category: str # Corridor / Ground / Miniboss / Shop / Event
-    code: Optional[int] = None # AP Location code (ROM location offsets)
-    bitflag: Optional[Tuple] = None # RAM address for item flag + bit flag offset
+    areanum: str  # In-game Area number
+    category: str  # Corridor / Ground / Miniboss / Shop / Event
+    code: Optional[int] = None  # AP Location code (ROM location offsets)
+    bitflag: Optional[Tuple] = None  # RAM address for item flag + bit flag offset
 
 
 def get_locations_by_category(category: str) -> Dict[str, TGLLocationData]:
@@ -21,6 +21,7 @@ def get_locations_by_category(category: str) -> Dict[str, TGLLocationData]:
             location_dict.setdefault(name, data)
 
     return location_dict
+
 
 def get_locations_by_areanum(areanum: str) -> Dict[str, TGLLocationData]:
     location_dict: Dict[str, TGLLocationData] = {}
@@ -34,6 +35,7 @@ def get_locations_by_areanum(areanum: str) -> Dict[str, TGLLocationData]:
             location_dict.setdefault(name, data)
 
     return location_dict
+
 
 def get_locationcode_by_bitflag(bitflag: Tuple) -> int:
     for name, data in location_table.items():
@@ -179,7 +181,6 @@ location_table: Dict[str, TGLLocationData] = {
     "A10 2000 Chip Shop (X12 Y5)":   TGLLocationData("Area 10", "Shop",      TGL_LOCID_BASE+2122, (0x8, 0x8 )),
     
 }
-
 
 event_location_table: Dict[str, TGLLocationData] = {
     "Corridor 1":   TGLLocationData("Area 0",      "Event"),

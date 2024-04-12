@@ -1,6 +1,6 @@
-from typing import Callable, Dict, List, NamedTuple, Optional
+from typing import Dict, List, NamedTuple, Optional
 
-from BaseClasses import Item, ItemClassification, MultiWorld
+from BaseClasses import Item, ItemClassification
 
 
 class TGLItem(Item):
@@ -13,6 +13,7 @@ class TGLItemData(NamedTuple):
     classification: ItemClassification = ItemClassification.filler
     max_quantity: int = 1
 
+
 def get_items_by_category(category: str) -> Dict[str, TGLItemData]:
     item_dict: Dict[str, TGLItemData] = {}
     for name, data in item_table.items():
@@ -20,6 +21,7 @@ def get_items_by_category(category: str) -> Dict[str, TGLItemData]:
             item_dict.setdefault(name, data)
 
     return item_dict
+
 
 def get_itemname_by_id(itemid: int) -> str:
     for name, data in item_table.items():
@@ -91,6 +93,7 @@ event_item_table: Dict[str, TGLItemData] = {
 
 }
 
+
 def get_item_count(name: str, distlevel: int) -> int:
     # Return item count based on item_distribution setting
     # option_vanilla = 0 - not called here, baked into item_table
@@ -122,3 +125,4 @@ def get_item_count(name: str, distlevel: int) -> int:
     
     else:
         return item_counts[name][distlevel]
+    
