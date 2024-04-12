@@ -29,8 +29,10 @@ belonging to a different world.
 ## Are there any other changes made?
 
 - Corridors no longer grant keys and these are shuffled in the item pool. Clearing Corridors will grant 2 item checks.
-- Shops that have 3 items will always show one "good" item and 2 Blue Chips. Because of how shops work in TGL,
-  Archipelago will always ensure the unique item is considered checked.
+- All shops now only have one item to purchase which is always considered an AP location check.
+- Rooms that used to explain how to open Corridors 1-10 may now contain hints to what class of items are held in
+   Corridor 11-20.
+- The password system has been disabled completely due to being incompatible with how AP handles items.
 
 # Setup Guide
 
@@ -99,10 +101,12 @@ NES at any time by running `/nes`.
 
 ## Known Issues
 
-- This mod is currently under development, so expect bugs and issues, though most games should be fullt completable without issue.
-- Because some items are always handled by the AP server, randomized TGL games can't be played without a connection to the AP server.
-- There is no save system, and passwords are not supported in conjunction with AP (item handling will be messed up), 
-   so use savestates to save progress when needed. The TGL password is also not supported and will have unexpected effects.
+- This mod is currently under development, so expect bugs and issues, 
+   though most games should be fully completable without issue.
+- Because some items are always handled by the AP server, randomized TGL games can't be played 
+   without a connection to the AP server.
+- There is no save system, and passwords are not supported in conjunction with AP, 
+   so use savestates to save progress when needed.
 
 # Special Thanks
 
