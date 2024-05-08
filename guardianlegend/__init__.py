@@ -7,6 +7,7 @@ from .Locations import TGLLocation, location_table, event_location_table
 from .Options import TGLOptions
 from .Regions import create_regions
 from .Rules import set_rules
+from .Map import TGLMap
 from .Rom import generate_output
 from .Client import TGLClient
 

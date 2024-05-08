@@ -8,6 +8,7 @@ from worlds.Files import APProcedurePatch, APTokenTypes, APTokenMixin
 from .Items import TGL_ITEMID_BASE, balanced_rapid_fire
 from .Locations import TGL_LOCID_BASE
 from .Options import TGLOptions
+from .Map import TGLMap
 
 if TYPE_CHECKING:
     from . import TGLWorld
@@ -140,12 +141,12 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
                     patch.write_token(
                         APTokenTypes.WRITE, 
                         location_rom_address-1,
-                        SHOP_JUNK_ITEM.to_bytes(1, 'little')
+                        SHOP_JUNK_ITEM.to_bytes(1, 'big')
                     )
                     patch.write_token(
                         APTokenTypes.WRITE, 
                         location_rom_address+1,
-                        SHOP_JUNK_ITEM.to_bytes(1, 'little')
+                        SHOP_JUNK_ITEM.to_bytes(1, 'big')
                     )
                 else:
                     location_rom_address = 0x16077 + location_data[1]
@@ -177,14 +178,14 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
                         patch.write_token(
                             APTokenTypes.WRITE, 
                             location_rom_address,
-                            item_data[1].to_bytes(1, 'little')
+                            item_data[1].to_bytes(1, 'big')
                         )    
                     elif item_data[0] == 2:
                         # Key item - treat as remote item
                         patch.write_token(
                             APTokenTypes.WRITE, 
                             location_rom_address,
-                            AP_ITEM_CODE.to_bytes(1, 'little')
+                            AP_ITEM_CODE.to_bytes(1, 'big')
                         )
                     else:
                         raise Exception('Invalid item ID found for The Guardian Legend.')
@@ -194,7 +195,7 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
                     patch.write_token(
                         APTokenTypes.WRITE, 
                         location_rom_address,
-                        AP_ITEM_CODE.to_bytes(1, 'little')
+                        AP_ITEM_CODE.to_bytes(1, 'big')
                     )
 
     ## Core changes ##
@@ -205,7 +206,7 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
     patch.write_token(
         APTokenTypes.WRITE, 
         corridor_reward_popup_byte,
-        0xEAEA.to_bytes(2, 'little')
+        0xEAEA.to_bytes(2, 'big')
     )
 
     # Edit 3-item shops to only have one item, change Lander text accordingly
@@ -220,31 +221,31 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
     patch.write_token(
         APTokenTypes.WRITE,
         left_shop_item_jump,
-        0xEAEAEA.to_bytes(3, 'little')
+        0xEAEAEA.to_bytes(3, 'big')
     )
     # No-op loading right item sprite data
     patch.write_token(
         APTokenTypes.WRITE,
         right_shop_item_jump,
-        0xEAEAEA.to_bytes(3, 'little')
+        0xEAEAEA.to_bytes(3, 'big')
     )
     # Bump the compare counter by one, start on 2nd item
     patch.write_token(
         APTokenTypes.WRITE,
         shop_item_counter,
-        0x07.to_bytes(1, 'little')
+        0x07.to_bytes(1, 'big')
     )
     # Bump the item data pointer by one, start on 2nd item
     patch.write_token(
         APTokenTypes.WRITE,
         item_data_pointer,
-        0x51.to_bytes(1, 'little')
+        0x51.to_bytes(1, 'big')
     )
     # No-op the loop branch so only one item's data loads
     patch.write_token(
         APTokenTypes.WRITE,
         branch_to_load_items,
-        0xEAEA.to_bytes(2, 'little')
+        0xEAEA.to_bytes(2, 'big')
     )
     
     # Overwrite the three-item shop text
@@ -323,7 +324,40 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
         bytes(helpful_lander_new_bytes)
     )
 
+    # NOTE: Need to double check Fireball's work for safety
+    # Remove screen flashes from EE use and Naju explosion cutscene (from Fireball87 rando)
+    ee_flash = 0x18BBD
+    end_flash = 0x894C
+    patch.write_token(
+        APTokenTypes.WRITE,
+        ee_flash,
+        0x0F.to_bytes(1, 'big')
+    )
+    patch.write_token(
+        APTokenTypes.WRITE,
+        end_flash,
+        0x0F.to_bytes(1, 'big')
+    )
+    
     ## Options-based changes ##
+
+    # Map Randomization
+    # Call Map rando to get the map bytestring and write
+    # TODO: Fill empty space with 0s? Also double check the 1916 figure
+    # TODO: Future version may affect item distribution
+    if options.randomize_map:
+        map_data_start = 0x14A7E
+        random_map = TGLMap()
+        random_map.randomizeMap(world)
+        random_map.print_maps() # For testing, should be a logging option?
+        map_hex: bytearray = random_map.writehex()
+        print(map_hex.hex(" ", 1))
+        patch.write_token(
+            APTokenTypes.WRITE,
+            map_data_start,
+            bytes(map_hex)
+        )
+
 
     # Balanced Rapid fire
     if options.balanced_rapid_fire:
@@ -332,7 +366,7 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
             patch.write_token(
                 APTokenTypes.WRITE, 
                 rapid_fire_byte+i,
-                balanced_rapid_fire[i].to_bytes(1, 'little')
+                balanced_rapid_fire[i].to_bytes(1, 'big')
             )
         
     # Corridor hints

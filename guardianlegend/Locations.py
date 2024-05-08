@@ -46,11 +46,13 @@ def get_locationcode_by_bitflag(bitflag: Tuple) -> int:
 # ID code base 8471765000 = 'TGL' in ASCII decimal
 TGL_LOCID_BASE = 8471760000
 TGL_LOCID_GROUND_BASE = TGL_LOCID_BASE + 1000
+TGL_LOCID_SHOP_BASE = TGL_LOCID_BASE + 2000
+TGL_LOCID_CORRIDOR_BASE = TGL_LOCID_BASE + 3000
+TGL_LOCID_BONUS_BASE = TGL_LOCID_BASE + 4000
 
-# Future concerns: Boss/Miniboss names probably need to be genericized in case of enemy rando
-#                  Same with Shop names and cost/chip rando 
+
 # Note: For LOCID, 1000s is Ground drops, 2000s is Shops, 3000s is Corridors, 4000s for double Corridor (see Rom.py)
-# Total locations: 106
+# Total locations available: 106
 location_table: Dict[str, TGLLocationData] = {
     # Area 0 - 12 locs
     "A0 Corridor 1 (X6 Y10)":      TGLLocationData("Area 0",  "Corridor",  TGL_LOCID_BASE+3001, (0x9, 0x1 )),
@@ -181,6 +183,184 @@ location_table: Dict[str, TGLLocationData] = {
     "A10 2000 Chip Shop (X12 Y5)":   TGLLocationData("Area 10", "Shop",      TGL_LOCID_BASE+2122, (0x8, 0x8 )),
     
 }
+
+'''
+# Location names genericized for map randomization
+# Assumes any given area can have up to 5 items and 3 minibosses
+# ROM IDs and RAM flags will have to be provided by the map randomizer at generation time
+location_table_generic: Dict[str, TGLLocationData] = {
+    # Area 0 
+    "A0 Corridor 1":        TGLLocationData("Area 0",  "Corridor"),
+    "A0 Corridor 1 Bonus":  TGLLocationData("Area 0",  "Corridor"),
+    "A0 Miniboss A":        TGLLocationData("Area 0",  "Miniboss"),
+    "A0 Miniboss B":        TGLLocationData("Area 0",  "Miniboss"),
+    "A0 Miniboss C":        TGLLocationData("Area 0",  "Miniboss"),
+    "A0 Ground Item A":     TGLLocationData("Area 0",  "Ground"),
+    "A0 Ground Item B":     TGLLocationData("Area 0",  "Ground"),
+    "A0 Ground Item C":     TGLLocationData("Area 0",  "Ground"),
+    "A0 Ground Item D":     TGLLocationData("Area 0",  "Ground"),
+    "A0 Ground Item E":     TGLLocationData("Area 0",  "Ground"),
+    "A0 Ground Item F":     TGLLocationData("Area 0",  "Ground"),
+    "A0 50 Chip Shop":      TGLLocationData("Area 0",  "Shop"),
+    "A0 100 Chip Shop":     TGLLocationData("Area 0",  "Shop"),
+    "A0 150 Chip Shop":     TGLLocationData("Area 0",  "Shop"),
+    "A0 300 Chip Shop":     TGLLocationData("Area 0",  "Shop"),
+    "A0 500 Chip Shop":     TGLLocationData("Area 0",  "Shop"),
+
+    # Area 1
+    "A1 Corridor 11":       TGLLocationData("Area 1",  "Corridor"),
+    "A1 Corridor 11 Bonus": TGLLocationData("Area 1",  "Corridor"),
+    "A1 Miniboss A":        TGLLocationData("Area 1",  "Miniboss"),
+    "A1 Miniboss B":        TGLLocationData("Area 1",  "Miniboss"),
+    "A1 Miniboss C":        TGLLocationData("Area 1",  "Miniboss"),
+    "A1 Ground Item A":     TGLLocationData("Area 1",  "Ground"),
+    "A1 Ground Item B":     TGLLocationData("Area 1",  "Ground"),
+    "A1 Ground Item C":     TGLLocationData("Area 1",  "Ground"),
+    "A1 Ground Item D":     TGLLocationData("Area 1",  "Ground"),
+    "A1 Ground Item E":     TGLLocationData("Area 1",  "Ground"),
+    "A1 Ground Item F":     TGLLocationData("Area 1",  "Ground"),
+
+    # Area 2
+    "A2 Corridor 2":        TGLLocationData("Area 2",  "Corridor"),
+    "A2 Corridor 2 Bonus":  TGLLocationData("Area 2",  "Corridor"),
+    "A2 Corridor 12":       TGLLocationData("Area 2",  "Corridor"),
+    "A2 Corridor 12 Bonus": TGLLocationData("Area 2",  "Corridor"),
+    "A2 Miniboss A":        TGLLocationData("Area 2",  "Miniboss"),
+    "A2 Miniboss B":        TGLLocationData("Area 2",  "Miniboss"),
+    "A2 Miniboss C":        TGLLocationData("Area 2",  "Miniboss"),
+    "A2 Ground Item A":     TGLLocationData("Area 2",  "Ground"),
+    "A2 Ground Item B":     TGLLocationData("Area 2",  "Ground"),
+    "A2 Ground Item C":     TGLLocationData("Area 2",  "Ground"),
+    "A2 Ground Item D":     TGLLocationData("Area 2",  "Ground"),
+    "A2 Ground Item E":     TGLLocationData("Area 2",  "Ground"),
+    "A2 Ground Item F":     TGLLocationData("Area 2",  "Ground"),
+    "A2 150 Chip Shop":     TGLLocationData("Area 2",  "Shop"),
+
+    # Area 3
+    "A3 Corridor 3":        TGLLocationData("Area 3",  "Corridor"),
+    "A3 Corridor 3 Bonus":  TGLLocationData("Area 3",  "Corridor"),
+    "A3 Corridor 13":       TGLLocationData("Area 3",  "Corridor"),
+    "A3 Corridor 13 Bonus": TGLLocationData("Area 3",  "Corridor"),
+    "A3 Miniboss A":        TGLLocationData("Area 3",  "Miniboss"),
+    "A3 Miniboss B":        TGLLocationData("Area 3",  "Miniboss"),
+    "A3 Miniboss C":        TGLLocationData("Area 3",  "Miniboss"),
+    "A3 Ground Item A":     TGLLocationData("Area 3",  "Ground"),
+    "A3 Ground Item B":     TGLLocationData("Area 3",  "Ground"),
+    "A3 Ground Item C":     TGLLocationData("Area 3",  "Ground"),
+    "A3 Ground Item D":     TGLLocationData("Area 3",  "Ground"),
+    "A3 Ground Item E":     TGLLocationData("Area 3",  "Ground"),
+    "A3 Ground Item F":     TGLLocationData("Area 3",  "Ground"),
+    
+    # Area 4
+    "A4 Corridor 4":        TGLLocationData("Area 4",  "Corridor"),
+    "A4 Corridor 4 Bonus":  TGLLocationData("Area 4",  "Corridor"),
+    "A4 Corridor 14":       TGLLocationData("Area 4",  "Corridor"),
+    "A4 Corridor 14 Bonus": TGLLocationData("Area 4",  "Corridor"),
+    "A4 Miniboss A":        TGLLocationData("Area 4",  "Miniboss"),
+    "A4 Miniboss B":        TGLLocationData("Area 4",  "Miniboss"),
+    "A4 Miniboss C":        TGLLocationData("Area 4",  "Miniboss"),
+    "A4 Ground Item A":     TGLLocationData("Area 4",  "Ground"),
+    "A4 Ground Item B":     TGLLocationData("Area 4",  "Ground"),
+    "A4 Ground Item C":     TGLLocationData("Area 4",  "Ground"),
+    "A4 Ground Item D":     TGLLocationData("Area 4",  "Ground"),
+    "A4 Ground Item E":     TGLLocationData("Area 4",  "Ground"),
+    "A4 Ground Item F":     TGLLocationData("Area 4",  "Ground"),
+    "A4 400 Chip Shop":     TGLLocationData("Area 4",  "Shop"),
+
+    # Area 5
+    "A5 Corridor 5":        TGLLocationData("Area 5",  "Corridor"),
+    "A5 Corridor 5 Bonus":  TGLLocationData("Area 5",  "Corridor"),
+    "A5 Corridor 15":       TGLLocationData("Area 5",  "Corridor"),
+    "A5 Corridor 15 Bonus": TGLLocationData("Area 5",  "Corridor"),
+    "A5 Miniboss A":        TGLLocationData("Area 5",  "Miniboss"),
+    "A5 Miniboss B":        TGLLocationData("Area 5",  "Miniboss"),
+    "A5 Miniboss C":        TGLLocationData("Area 5",  "Miniboss"),
+    "A5 Ground Item A":     TGLLocationData("Area 5",  "Ground"),
+    "A5 Ground Item B":     TGLLocationData("Area 5",  "Ground"),
+    "A5 Ground Item C":     TGLLocationData("Area 5",  "Ground"),
+    "A5 Ground Item D":     TGLLocationData("Area 5",  "Ground"),
+    "A5 Ground Item E":     TGLLocationData("Area 5",  "Ground"),
+    "A5 Ground Item F":     TGLLocationData("Area 5",  "Ground"),
+
+    # Area 6
+    "A6 Corridor 6":        TGLLocationData("Area 6",  "Corridor"),
+    "A6 Corridor 6 Bonus":  TGLLocationData("Area 6",  "Corridor"),
+    "A6 Corridor 16":       TGLLocationData("Area 6",  "Corridor"),
+    "A6 Corridor 16 Bonus": TGLLocationData("Area 6",  "Corridor"),
+    "A6 Miniboss A":        TGLLocationData("Area 6",  "Miniboss"),
+    "A6 Miniboss B":        TGLLocationData("Area 6",  "Miniboss"),
+    "A6 Miniboss C":        TGLLocationData("Area 6",  "Miniboss"),
+    "A6 Ground Item A":     TGLLocationData("Area 6",  "Ground"),
+    "A6 Ground Item B":     TGLLocationData("Area 6",  "Ground"),
+    "A6 Ground Item C":     TGLLocationData("Area 6",  "Ground"),
+    "A6 Ground Item D":     TGLLocationData("Area 6",  "Ground"),
+    "A6 Ground Item E":     TGLLocationData("Area 6",  "Ground"),
+    "A6 Ground Item F":     TGLLocationData("Area 6",  "Ground"),
+
+    # Area 7
+    "A7 Corridor 7":        TGLLocationData("Area 7",  "Corridor"),
+    "A7 Corridor 7 Bonus":  TGLLocationData("Area 7",  "Corridor"),
+    "A7 Corridor 17":       TGLLocationData("Area 7",  "Corridor"),
+    "A7 Corridor 17 Bonus": TGLLocationData("Area 7",  "Corridor"),
+    "A7 Miniboss A":        TGLLocationData("Area 7",  "Miniboss"),
+    "A7 Miniboss B":        TGLLocationData("Area 7",  "Miniboss"),
+    "A7 Miniboss C":        TGLLocationData("Area 7",  "Miniboss"),
+    "A7 Ground Item A":     TGLLocationData("Area 7",  "Ground"),
+    "A7 Ground Item B":     TGLLocationData("Area 7",  "Ground"),
+    "A7 Ground Item C":     TGLLocationData("Area 7",  "Ground"),
+    "A7 Ground Item D":     TGLLocationData("Area 7",  "Ground"),
+    "A7 Ground Item E":     TGLLocationData("Area 7",  "Ground"),
+    "A7 Ground Item F":     TGLLocationData("Area 7",  "Ground"),
+    "A7 1000 Chip Shop":    TGLLocationData("Area 7",  "Shop"),
+    "A7 600 Chip Shop":     TGLLocationData("Area 7",  "Shop"),
+
+    # Area 8
+    "A8 Corridor 8":        TGLLocationData("Area 8",  "Corridor"),
+    "A8 Corridor 8 Bonus":  TGLLocationData("Area 8",  "Corridor"),
+    "A8 Corridor 18":       TGLLocationData("Area 8",  "Corridor"),
+    "A8 Corridor 18 Bonus": TGLLocationData("Area 8",  "Corridor"),
+    "A8 Miniboss A":        TGLLocationData("Area 8",  "Miniboss"),
+    "A8 Miniboss B":        TGLLocationData("Area 8",  "Miniboss"),
+    "A8 Miniboss C":        TGLLocationData("Area 8",  "Miniboss"),
+    "A8 Ground Item A":     TGLLocationData("Area 8",  "Ground"),
+    "A8 Ground Item B":     TGLLocationData("Area 8",  "Ground"),
+    "A8 Ground Item C":     TGLLocationData("Area 8",  "Ground"),
+    "A8 Ground Item D":     TGLLocationData("Area 8",  "Ground"),
+    "A8 Ground Item E":     TGLLocationData("Area 8",  "Ground"),
+    "A8 Ground Item F":     TGLLocationData("Area 8",  "Ground"),
+
+    # Area 9
+    "A9 Corridor 9":        TGLLocationData("Area 9",  "Corridor"),
+    "A9 Corridor 9 Bonus":  TGLLocationData("Area 9",  "Corridor"),
+    "A9 Corridor 19":       TGLLocationData("Area 9",  "Corridor"),
+    "A9 Corridor 19 Bonus": TGLLocationData("Area 9",  "Corridor"),
+    "A9 Miniboss A":        TGLLocationData("Area 9",  "Miniboss"),
+    "A9 Miniboss B":        TGLLocationData("Area 9",  "Miniboss"),
+    "A9 Miniboss C":        TGLLocationData("Area 9",  "Miniboss"),
+    "A9 Ground Item A":     TGLLocationData("Area 9",  "Ground"),
+    "A9 Ground Item B":     TGLLocationData("Area 9",  "Ground"),
+    "A9 Ground Item C":     TGLLocationData("Area 9",  "Ground"),
+    "A9 Ground Item D":     TGLLocationData("Area 9",  "Ground"),
+    "A9 Ground Item E":     TGLLocationData("Area 9",  "Ground"),
+    "A9 Ground Item F":     TGLLocationData("Area 9",  "Ground"),
+
+    # Area 10
+    "A10 Corridor 10":       TGLLocationData("Area 10",  "Corridor"),
+    "A10 Corridor 10 Bonus": TGLLocationData("Area 10",  "Corridor"),
+    "A10 Corridor 20":       TGLLocationData("Area 10",  "Corridor"),
+    "A10 Corridor 20 Bonus": TGLLocationData("Area 10",  "Corridor"),
+    "A10 Miniboss A":        TGLLocationData("Area 10",  "Miniboss"),
+    "A10 Miniboss B":        TGLLocationData("Area 10",  "Miniboss"),
+    "A10 Miniboss C":        TGLLocationData("Area 10",  "Miniboss"),
+    "A10 Ground Item A":     TGLLocationData("Area 10",  "Ground"),
+    "A10 Ground Item B":     TGLLocationData("Area 10",  "Ground"),
+    "A10 Ground Item C":     TGLLocationData("Area 10",  "Ground"),
+    "A10 Ground Item D":     TGLLocationData("Area 10",  "Ground"),
+    "A10 Ground Item E":     TGLLocationData("Area 10",  "Ground"),
+    "A10 Ground Item F":     TGLLocationData("Area 10",  "Ground"),
+    "A10 2000 Chip Shop":    TGLLocationData("Area 10", "Shop"),
+}
+'''
 
 event_location_table: Dict[str, TGLLocationData] = {
     "Corridor 1":   TGLLocationData("Area 0",      "Event"),
