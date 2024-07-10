@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Tuple, Dict
 
 from NetUtils import ClientStatus
 import worlds._bizhawk as bizhawk
@@ -59,11 +59,16 @@ class TGLClient(BizHawkClient):
 
     opened_corridors: bool
     message_interval_set: bool
+    is_randomized_map: bool
+    randomized_location_ids: Dict[str, int]
     
     def __init__(self) -> None:
         super().__init__()
         self.opened_corridors = False
         self.message_interval_set = False
+        self.is_randomized_map = False
+        self.randomized_location_ids = {}
+
 
     async def validate_rom(self, ctx: "BizHawkClientContext") -> bool:
         from CommonClient import logger
@@ -86,11 +91,17 @@ class TGLClient(BizHawkClient):
         
         ctx.game = self.game
         ctx.items_handling = 0b011
+        ctx.want_slot_data = True
 
         return True
 
     async def game_watcher(self, ctx: "BizHawkClientContext") -> None:
-        
+        if ctx.server is None or ctx.server.socket.closed or ctx.slot_data is None:
+            return
+
+        if ctx.slot_data["randomized_map"] and not self.randomized_location_ids:
+            self.is_randomized_map = True
+            self.randomized_location_ids = ctx.slot_data["randomized_location_ids"]
         # main watch loop
         try:
             # Check it's safe to receive items (any time not on title screen/demo mode/sound check)
@@ -155,9 +166,11 @@ class TGLClient(BizHawkClient):
                 is_remote_item = not ctx.slot_concerns_self(ctx.items_received[num_new_items].player)
 
                 # location id < 0 indicates cheat console or server item, we always need to process those
-                # location id in 4000s indicated bonus corridor item that also needs to be handled
+                # location id in 4000s or 8000s indicates bonus corridor item that also needs to be handled
                 item_loc = ctx.items_received[num_new_items].location
-                is_special_item = (item_loc < 0) or (item_loc - TGL_LOCID_BASE >= 4000) 
+                is_special_item = ((item_loc < 0) 
+                                   or (4000 <= (item_loc - TGL_LOCID_BASE) < 5000) 
+                                   or (8000 <= (item_loc - TGL_LOCID_BASE) < 9000))
                 next_item_type: Tuple = divmod(next_item_id - TGL_ITEMID_BASE, 1000)
 
                 # Determine how to handle the item based on type:
@@ -383,7 +396,11 @@ class TGLClient(BizHawkClient):
             for i in range(68):
                 if (location_flag_bits & (1 << i)) != 0:
                     locbits = divmod(i, 8)
-                    locid = get_locationcode_by_bitflag((locbits[0], 1 << locbits[1]))
+                    if self.is_randomized_map:
+                        bitflag_s = f"{locbits[0]},{1 << locbits[1]}"
+                        locid = self.randomized_location_ids[bitflag_s]
+                    else:
+                        locid = get_locationcode_by_bitflag((locbits[0], 1 << locbits[1]))
                     if locid not in ctx.checked_locations:
                         ctx.locations_checked.add(locid)
                         await ctx.send_msgs([{"cmd": "LocationChecks", "locations": [locid]}])
@@ -393,7 +410,11 @@ class TGLClient(BizHawkClient):
             for j in range(20):
                 if (corridor_flag_bits & (1 << j)) != 0:
                     locbits = divmod(j, 8)
-                    locid = get_locationcode_by_bitflag((locbits[0] + 9, 1 << locbits[1]))
+                    if self.is_randomized_map:
+                        bitflag_s = f"{locbits[0] + 9},{1 << locbits[1]}"
+                        locid = self.randomized_location_ids[bitflag_s]
+                    else:
+                        locid = get_locationcode_by_bitflag((locbits[0] + 9, 1 << locbits[1]))
                     locid_bonus = locid + 1000
                     checks_out: List[int] = []
                     if locid not in ctx.checked_locations:

@@ -1,7 +1,8 @@
 from typing import Dict, List, NamedTuple, Optional
 
 from BaseClasses import MultiWorld, Region, Entrance
-from .Locations import TGLLocation, location_table, get_locations_by_areanum
+from .Locations import (TGLLocation, location_table, location_table_generic, 
+                        get_locations_by_areanum, get_event_locations_by_areanum)
 
 
 class TGLRegionData(NamedTuple):
@@ -9,7 +10,9 @@ class TGLRegionData(NamedTuple):
     region_exits: Optional[List[str]]
 
 
-def create_regions(multiworld: MultiWorld, player: int):
+def create_regions(multiworld: MultiWorld, player: int, random_location_names: List[str]):
+    #print("")
+    #print(random_location_names)
     regions: Dict[str, TGLRegionData] = {
         "Menu":        TGLRegionData(None, ["Area 0"]),
         "Area 0":      TGLRegionData([], ["Area 1","Area 2","Area 3","Area 4","Area 5","Area 6","Area 7",
@@ -27,10 +30,22 @@ def create_regions(multiworld: MultiWorld, player: int):
         "Corridor 21": TGLRegionData([], None),
     }
 
-    # Fill regions by Area number
+    # Fill regions by Area number (vanilla map)
+    if not random_location_names:
+        for areanum in range(0, 11):
+            areaname = "Area " + str(areanum)
+            for locname in get_locations_by_areanum(areaname).keys():
+                regions[areaname].locations.append(locname)
+    # Fill regions by location name (map rando)
+    else:
+        for locname in random_location_names:
+            areaname = location_table_generic[locname].areanum
+            regions[areaname].locations.append(locname)
+
+    # Add Corridor Clear event locations
     for areanum in range(0, 11):
         areaname = "Area " + str(areanum)
-        for locname in get_locations_by_areanum(areaname).keys():
+        for locname in get_event_locations_by_areanum(areaname).keys():
             regions[areaname].locations.append(locname)
 
     # Victory location is in its own region
@@ -38,7 +53,8 @@ def create_regions(multiworld: MultiWorld, player: int):
 
     # Set up regions
     for name, data in regions.items():
-        multiworld.regions.append(create_region(multiworld, player, name, data))
+        multiworld.regions.append(create_region(multiworld, player, name, data, 
+                                                True if random_location_names else False))
 
     multiworld.get_entrance("Area 0", player).connect(multiworld.get_region("Area 0", player))
     multiworld.get_entrance("Area 1", player).connect(multiworld.get_region("Area 1", player))
@@ -54,11 +70,15 @@ def create_regions(multiworld: MultiWorld, player: int):
     multiworld.get_entrance("Corridor 21", player).connect(multiworld.get_region("Corridor 21", player))
 
 
-def create_region(multiworld: MultiWorld, player: int, name: str, data: TGLRegionData):
+def create_region(multiworld: MultiWorld, player: int, name: str, data: TGLRegionData, is_random_map: bool = False):
     region = Region(name, player, multiworld)
     if data.locations:
         for loc_name in data.locations:
-            loc_data = location_table.get(loc_name)
+            loc_data = None
+            if is_random_map:
+                loc_data = location_table_generic.get(loc_name)
+            else:
+                loc_data = location_table.get(loc_name)
             location = TGLLocation(player, loc_name, loc_data.code if loc_data else None, region)
             region.locations.append(location)
 

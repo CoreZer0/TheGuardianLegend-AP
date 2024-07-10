@@ -71,7 +71,7 @@ class LimitedSubweapons(Toggle):
 '''
 
 class RandomizeMap(Toggle):
-    """This is an EXPERIMENTAL setting! Randomizes the layout of the walking sections of Naju.
+    """Randomizes the layout of the walking sections of Naju.
     Areas will still branch off from central Area 0 but the layouts will be different.
     Item distributions will be the same as vanilla, but the original coordinates no longer apply.
     Randomization algorithm adapted from Fireball87: https://github.com/fireball87/GuardianLegendRando"""

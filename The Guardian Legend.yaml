@@ -25,18 +25,20 @@
 #     {PLAYER} will be replaced with the player's slot number, if that slot number is greater than 1.
 #     {number} will be replaced with the counter value of the name.
 #     {NUMBER} will be replaced with the counter value of the name, if the counter value is greater than 1.
-name: Player{number}
+name: TGL_Player{number}
 
 # Used to describe your yaml. Useful if you have multiple files.
 description: Default The Guardian Legend Template
 
 game: The Guardian Legend
 requires:
-  version: 0.4.5 # Version of Archipelago required for this yaml to work as expected.
+  version: 0.5.0 # Version of Archipelago required for this yaml to work as expected.
 
 The Guardian Legend:
+  # Game Options
   progression_balancing:
     # A system that can move progression earlier, to try and prevent the player from getting stuck and bored early.
+    # 
     # A lower setting means more getting stuck. A higher setting means less getting stuck.
     #
     # You can define additional values between the minimum and maximum values.
@@ -51,52 +53,21 @@ The Guardian Legend:
 
   accessibility:
     # Set rules for reachability of your items/locations.
-    # Locations: ensure everything can be reached and acquired.
-    # Items: ensure all logically relevant items can be acquired.
-    # Minimal: ensure what is needed to reach your goal can be acquired.
+    # 
+    # - **Locations:** ensure everything can be reached and acquired.
+    # - **Items:** ensure all logically relevant items can be acquired.
+    # - **Minimal:** ensure what is needed to reach your goal can be acquired.
     locations: 0
     items: 50
     minimal: 0
-
-  local_items:
-    # Forces these items to be in their native world.
-    []
-
-  non_local_items:
-    # Forces these items to be outside their native world.
-    []
-
-  start_inventory:
-    # Start with these items.
-    {}
-
-  start_hints:
-    # Start with these item's locations prefilled into the !hint command.
-    []
-
-  start_location_hints:
-    # Start with these locations and their item prefilled into the !hint command
-    []
-
-  exclude_locations:
-    # Prevent these locations from having an important item
-    []
-
-  priority_locations:
-    # Prevent these locations from having an unimportant item
-    []
-
-  item_links:
-    # Share part of your item pool with other players.
-    []
 
   balanced_rapid_fire:
     # Makes the upgrade power of Rapid Fire more evenly distributed, and gives a slightly faster starting speed.
     # 
     # True: 10/8/6/4/2/1 frames per shot.
     # False: 12/5/4/3/2/1 frames per shot (vanilla behavior).
-    false: 0
-    true: 50
+    'false': 0
+    'true': 50
 
   item_distribution:
     # Determines how many copies of items and upgrades exist in the item pool. 
@@ -107,23 +78,28 @@ The Guardian Legend:
     # Exact: Only the exact number of items needed to max out stats and subweapons is provided.
     # Reduced: Reduced maximum for stats and subweapons. This will make the game much harder!
     # Extra: Some extra copies of all items are added to the pool. This will make the game slightly easier.
+    # 
+    # (Developer note: Extra is recommended for Sync games, Exact for Async. Reduced may result in brutal difficulty!)
     vanilla: 0
     exact: 0
     reduced: 0
     extra: 50
 
   item_gating:
-    # Determines how much offensive and defense power is needed before putting each Area in logic. 
+    # Determines how much offensive and defensive power is needed before putting each Area in logic. 
     # Higher settings will be easier but more likely to follow the vanilla game Area order.
     # 
+    # Totals required for Area 10 - 
     # Low: 7 Defense, 9 Offense
     # Normal: 9 Defense, 12 Offense
     # High: 12 Defense, 16 Offense
     # 
-    # (Note: in the Offense totals, Attack Up counts as double)
+    # (Developer notes: In the Offense totals, Attack Up counts as double.
+    # High is recommended for most players, as lower gating can result in having to do late-game areas 
+    #  while severely underpowered.)
     low: 0
-    normal: 50
-    high: 0
+    normal: 0
+    high: 50
 
   corridor_hints:
     # The rooms that normally explain how to open Corridor 1-10 will instead have hints for
@@ -138,3 +114,12 @@ The Guardian Legend:
     random-high: 0
     none: 0 # equivalent to 0
     all: 50 # equivalent to 10
+    half: 0 # equivalent to 5
+
+  randomize_map:
+    # Randomizes the layout of the walking sections of Naju.
+    # Areas will still branch off from central Area 0 but the layouts will be different.
+    # Item distributions will be the same as vanilla, but the original coordinates no longer apply.
+    # Randomization algorithm adapted from Fireball87: https://github.com/fireball87/GuardianLegendRando
+    'false': 0
+    'true': 50

@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Tuple, Dict, Optional
+from typing import TYPE_CHECKING, Tuple, Dict, List, Optional
 
 import Utils
 import settings
@@ -121,12 +121,26 @@ class TGLProcedurePatch(APProcedurePatch, APTokenMixin):
  
 def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatch) -> None:
     corridor_hint_items: Dict[int, IC] = {}
-    for location in world.multiworld.get_filled_locations(world.player):
 
+    # Note: Test prints for determining filled location addresses
+    #print("")
+    #for location in world.multiworld.get_filled_locations(world.player): 
+    #    print(location.name + " " + str(location.address))
+    #TEST DONE
+
+    for location in world.multiworld.get_filled_locations(world.player):
         if location.address is not None:
-            
+            #print("Loc addr: " + str(location.address))
             # Determine location type: Ground drop, Shop, Corridor Drop, or Key/Boss
-            location_data: Tuple = divmod(get_internal_loc_id(location.address), 1000)
+            location_data: List[int] = []
+            if options.randomize_map:
+                # Use the stored random location data to get the original ROM location info
+                randomized_location_data: int = world.tgl_random_locations[location.address][0]
+                location_data_split = divmod(get_internal_loc_id(randomized_location_data), 1000)
+                location_data = list(location_data_split)
+            else:
+                location_data_split = divmod(get_internal_loc_id(location.address), 1000)
+                location_data = list(location_data_split)
             location_rom_address = 0x0
             if location_data[0] == 1:
                 # Ground or Miniboss drop 
@@ -347,11 +361,8 @@ def write_tokens(world: "TGLWorld", options: TGLOptions, patch: TGLProcedurePatc
     # TODO: Future version may affect item distribution
     if options.randomize_map:
         map_data_start = 0x14A7E
-        random_map = TGLMap()
-        random_map.randomizeMap(world)
-        random_map.print_maps() # For testing, should be a logging option?
-        map_hex: bytearray = random_map.writehex()
-        print(map_hex.hex(" ", 1))
+        map_hex: bytearray = world.tgl_random_map.writehex()
+        #print(map_hex.hex(" ", 1))
         patch.write_token(
             APTokenTypes.WRITE,
             map_data_start,

@@ -1,12 +1,15 @@
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Tuple, Dict
 from copy import deepcopy
-
 from enum import IntFlag, IntEnum
+from .Locations import (TGL_LOCID_BASE, TGL_LOCID_BONUS, TGL_LOCID_BONUS_GENERIC, TGL_LOCID_CORRIDOR, 
+                        TGL_LOCID_CORRIDOR_GENERIC, TGL_LOCID_GROUND, TGL_LOCID_GROUND_GENERIC, TGL_LOCID_SHOP,
+                        TGL_LOCID_SHOP_GENERIC)
 
 if TYPE_CHECKING:
     from . import TGLWorld
 
 
+# Original template from Fireball
 area_template = [
     [ 1, 1, 1, 1,-1, 2, 2, 2, 2, 2, 2, 2,-1, 3, 3, 3, 3, 3, 3,-1, 4, 4, 4, 4],
     [ 1, 1, 1, 1,-1, 2, 2, 2, 2, 2, 2, 2,-1, 3, 3, 3, 3, 3, 3,-1, 4, 4, 4, 4],
@@ -33,7 +36,57 @@ area_template = [
     [ 7, 7, 7, 7,-1, 8, 8, 8, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9, 9,-1,10,10,10,10],
     [ 7, 7, 7, 7,-1, 8, 8, 8, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9, 9,-1,10,10,10,10],
 ]
+# NOTE: Test code - Room count testing
+'''
+def room_count_per_area():
+    count_totals = {
+        -2: 0,
+        -1: 0,
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0
+    }
+    for ycoord in area_template:
+        for xcoord in ycoord:
+            count_totals[xcoord] += 1
+    print(count_totals)
 
+
+area_template = [
+    [ 1, 1, 1, 1,-1, 2, 2, 2, 2, 2, 2, 2,-1, 3, 3, 3, 3, 3, 3,-1, 4, 4, 4, 4],
+    [ 1, 1, 1, 1,-1, 2, 2, 2, 2, 2, 2, 2,-1, 3, 3, 3, 3, 3, 3,-1, 4, 4, 4, 4],
+    [ 1, 1, 1, 1,-1, 2, 2, 2, 2, 2, 2, 2,-1, 3, 3, 3, 3, 3, 3,-1, 4, 4, 4, 4],
+    [ 1, 1, 1, 1,-1,-1,-1, 2, 2, 2, 2, 2,-1, 3, 3, 3, 3,-1,-1,-1, 4, 4, 4, 4],
+    [ 1, 1, 1, 1, 1, 1,-1, 2, 2, 2, 2,-1,-1, 3, 3, 3, 3,-1, 4, 4, 4, 4, 4, 4],
+    [ 1, 1, 1, 1, 1, 1,-1, 2, 2, 2, 2,-1, 3, 3, 3, 3, 3,-1, 4, 4, 4, 4, 4, 4],
+    [ 1, 1, 1, 1, 1, 1,-1,-1,-1,-1, 2,-1, 3, 3,-1,-1,-1,-1, 4, 4, 4, 4, 4, 4],
+    [-1,-1,-1,-1, 1, 1, 1, 1, 1,-1, 2,-1, 3, 3,-1, 4, 4, 4, 4, 4,-1,-1,-1,-1],
+    [ 5, 5, 5,-1, 1, 1, 1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 4, 4, 4,-1, 6, 6, 6],
+    [ 5, 5, 5,-1, 1, 1, 1,-1, 0, 0, 0, 0, 0, 0, 0, 0,-1, 4, 4, 4,-1, 6, 6, 6],
+    [ 5, 5, 5,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1, 6, 6, 6],
+    [ 5, 5, 5, 5, 5, 5, 5,-1, 0, 0, 0, 0, 0, 0, 0, 0,-1, 6, 6, 6, 6, 6, 6, 6],
+    [ 5, 5, 5, 5, 5, 5, 5,-1, 0, 0, 0, 0, 0, 0, 0, 0,-1, 6, 6, 6, 6, 6, 6, 6],
+    [ 5, 5, 5, 5,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1, 6, 6, 6, 6],
+    [ 5, 5, 5, 5,-1, 7, 7,-1, 0, 0, 0, 0, 0, 0, 0, 0,-1,10,10,-1, 6, 6, 6, 6],
+    [ 5, 5, 5,-1,-1, 7, 7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,10,10,-1,-1, 6, 6, 6],
+    [-1,-1,-1,-1, 7, 7, 7, 7, 7,-1, 8,-1, 9, 9,-1,10,10,10,10,10,-1,-1,-1,-1],
+    [ 7, 7, 7, 7, 7, 7,-1,-1,-1,-1, 8,-1, 9, 9,-1,-1,-1,-1,10,10,10,10,10,10],
+    [ 7, 7, 7, 7, 7, 7,-1, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9,-1,10,10,10,10,10,10],
+    [ 7, 7, 7, 7, 7, 7,-1, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9,-1,10,10,10,10,10,10],
+    [ 7, 7, 7, 7,-1,-1,-1, 8, 8, 8, 8,-1,-1, 9, 9, 9, 9,-1,-1,-1,10,10,10,10],
+    [ 7, 7, 7, 7,-1, 8, 8, 8, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9, 9,-1,10,10,10,10],
+    [ 7, 7, 7, 7,-1, 8, 8, 8, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9, 9,-1,10,10,10,10],
+    [ 7, 7, 7, 7,-1, 8, 8, 8, 8, 8, 8, 8,-1, 9, 9, 9, 9, 9, 9,-1,10,10,10,10],
+]
+'''
 
 room_blocksets = {
     "no_chips_no_transition": [0x6894,0x3D94,0x4694,0x5094,0x8794,0x3F94,0x8C94,0x5D94,0x5294,0xE394,0xDD94,0xDF94,
@@ -355,7 +408,66 @@ class TGLMap:
         print("Visual map END")
         print("")
 
-    
+    # Extract the data for where each item location ID was randomized to
+    # Outputs a dict with the generic location ID as a key, 
+    #  and the assoicated in game location ID and the XY coordinates (for entrance hints) as data. 
+    def get_randomized_item_locations(self) -> Dict[int, Tuple[int, int, int]]:
+        item_location_table: Dict[int, Tuple[int, int, int]] = {} # output dict
+        area_item_data: List[List[Tuple[int, int, int]]] = [[],[],[],[],[],[],[],[],[],[],[],[]] # item data per area
+        area_miniboss_data: List[List[Tuple[int, int, int]]] = [[],[],[],[],[],[],[],[],[],[],[],[]] # miniboss data
+        # translate the room content_ids to location ids
+        shop_translation = {0x3A: 2, 0x3B: 5, 0x3C: 8, 0x3D: 11, 0x3E: 14, 
+                            0x3F: 102, 0x40: 107, 0x41: 112, 0x42: 117, 0x43: 122}
+        ykey = 0
+        # Build the data by iterating over the map table
+        for ycoord in self.mapdata:
+            xkey = 0
+            for xcoord in ycoord:
+                # store the item/miniboss data per area as a tuple(itemid, X, Y)
+                # for now, shops are tied to area so just add them directly
+                if xcoord.room_type == TGLRoomType.ITEM:                   
+                    area_item_data[xcoord.area].append((xcoord.content_id, xkey, ykey))
+                elif xcoord.room_type == TGLRoomType.MINIBOSS:
+                    area_miniboss_data[xcoord.area].append((xcoord.content_id, xkey, ykey))
+                elif (xcoord.room_type == TGLRoomType.SINGLESHOP) or (xcoord.room_type == TGLRoomType.MULTISHOP):
+                    # We know single shops are in A0 so just add the info directly
+                    shop_location = shop_translation[xcoord.content_id]
+                    item_location_table[TGL_LOCID_SHOP_GENERIC + shop_location] = \
+                        (TGL_LOCID_SHOP + shop_location, xkey, ykey)
+                # Corridor 21 is a room, but has no item, so don't log it as a location
+                elif (xcoord.room_type == TGLRoomType.CORRIDOR):
+                    if xcoord.content_id < 21:
+                        item_location_table[TGL_LOCID_CORRIDOR_GENERIC + xcoord.content_id] = \
+                            (TGL_LOCID_CORRIDOR + xcoord.content_id, xkey, ykey)
+                        item_location_table[TGL_LOCID_BONUS_GENERIC + xcoord.content_id] = \
+                            (TGL_LOCID_BONUS + xcoord.content_id, xkey, ykey)
+
+                xkey += 1
+            ykey += 1
+        # We only know how many items per area after sweeping the map, so use the indices to generate location ids
+        for arealist in area_item_data:
+            assert (len(arealist) <= 6) # No area should have more than 6 items
+            for item_data in arealist:
+                # Generic ground loc IDs are (generic offset + area*10 + index+3)
+                generic_location_id = (TGL_LOCID_GROUND_GENERIC 
+                                       + (area_item_data.index(arealist) * 10) 
+                                       + (arealist.index(item_data) + 3))
+                item_location_table[generic_location_id] = (TGL_LOCID_GROUND + item_data[0], 
+                                                            item_data[1], 
+                                                            item_data[2])
+        for arealist in area_miniboss_data:
+            assert (len(arealist) <= 3) # No area should have more than 3 minibosses
+            for item_data in arealist:
+                # Generic miniboss loc IDs are (generic offset + area*10 + index)
+                generic_location_id = (TGL_LOCID_GROUND_GENERIC 
+                                       + (area_miniboss_data.index(arealist) * 10) 
+                                       + (arealist.index(item_data)))
+                item_location_table[generic_location_id] = (TGL_LOCID_GROUND + item_data[0], 
+                                                            item_data[1], 
+                                                            item_data[2])
+        return item_location_table
+
+
     # This is the core function to DO ALL THE THINGS to the map, proceed through helper functions to randomize map
     def randomizeMap(self, world: "TGLWorld"):
         # Subdivide the map into areas from A0, and shuffle them
@@ -399,9 +511,9 @@ class TGLMap:
 
         self.__populate_enemies(world)
         mapsize: int = self.__count_bytes()
-        print("Map Size: " + str(mapsize))
+        #print("Map Size: " + str(mapsize))
         if mapsize > 1916:
-            raise Exception("TGL Map Rando: Map size in Bytes is too large to fit in ROM.")
+            raise Exception("TGL Map Randomizer: Map size in Bytes is too large to fit in ROM.")
 
     def __count_bytes(self) -> int:
         bytecount: int = 0
@@ -898,8 +1010,10 @@ class TGLMap:
                 if xcoord.is_accessible:
                     if (xcoord.room_type == TGLRoomType.NORMAL) or (xcoord.room_type == TGLRoomType.ITEM):
                         # Sets the % chance there is an enemy (currently ~90%)
-                        if world.random.random() > 0.1:
-                            xcoord.enemy_type = (world.random.choice(range(47))) + 1
+                        # Skip the PChip refill room in Area 0
+                        if not (xcoord.block_set == 0xEA95):
+                            if world.random.random() > 0.1:
+                                xcoord.enemy_type = (world.random.choice(range(47))) + 1
 
     def __place_area_decorations(self, world: "TGLWorld"):
         starting_rooms: List[Tuple] = []
