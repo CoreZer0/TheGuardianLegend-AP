@@ -25,17 +25,21 @@
 #     {PLAYER} will be replaced with the player's slot number, if that slot number is greater than 1.
 #     {number} will be replaced with the counter value of the name.
 #     {NUMBER} will be replaced with the counter value of the name, if the counter value is greater than 1.
-name: TGL_Player{number}
+name: Player{number}
 
 # Used to describe your yaml. Useful if you have multiple files.
 description: Default The Guardian Legend Template
 
 game: The Guardian Legend
 requires:
-  version: 0.5.0 # Version of Archipelago required for this yaml to work as expected.
+  version: 0.6.6 # Version of Archipelago required for this yaml to work as expected.
+  game:
+    The Guardian Legend: 0.7.0 # Version of the world required for this yaml to work as expected.
 
 The Guardian Legend:
-  # Game Options
+  ################
+  # Game Options #
+  ################
   progression_balancing:
     # A system that can move progression earlier, to try and prevent the player from getting stuck and bored early.
     # 
@@ -45,8 +49,9 @@ The Guardian Legend:
     # Minimum value is 0
     # Maximum value is 99
     random: 0
-    random-low: 0
-    random-high: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-99: 0 # random value between 0 and 99
     disabled: 0 # equivalent to 0
     normal: 50 # equivalent to 50
     extreme: 0 # equivalent to 99
@@ -54,11 +59,10 @@ The Guardian Legend:
   accessibility:
     # Set rules for reachability of your items/locations.
     # 
-    # - **Locations:** ensure everything can be reached and acquired.
-    # - **Items:** ensure all logically relevant items can be acquired.
-    # - **Minimal:** ensure what is needed to reach your goal can be acquired.
-    locations: 0
-    items: 50
+    # **Full:** ensure everything can be reached and acquired.
+    # 
+    # **Minimal:** ensure what is needed to reach your goal can be acquired.
+    full: 50
     minimal: 0
 
   balanced_rapid_fire:
@@ -110,10 +114,11 @@ The Guardian Legend:
     # Minimum value is 0
     # Maximum value is 10
     random: 0
-    random-low: 0
-    random-high: 0
-    none: 0 # equivalent to 0
-    all: 50 # equivalent to 10
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-10: 0 # random value between 0 and 10
+    none: 50 # equivalent to 0
+    all: 0 # equivalent to 10
     half: 0 # equivalent to 5
 
   randomize_map:
@@ -121,5 +126,50 @@ The Guardian Legend:
     # Areas will still branch off from central Area 0 but the layouts will be different.
     # Item distributions will be the same as vanilla, but the original coordinates no longer apply.
     # Randomization algorithm adapted from Fireball87: https://github.com/fireball87/GuardianLegendRando
-    'false': 0
-    'true': 50
+    'false': 50
+    'true': 0
+
+  ###########################
+  # Item & Location Options #
+  ###########################
+  local_items:
+    # Forces these items to be in their native world.
+    []
+
+  non_local_items:
+    # Forces these items to be outside their native world.
+    []
+
+  start_inventory:
+    # Start with the specified amount of these items. Example: "Bomb: 1"
+    {}
+
+  start_inventory_from_pool:
+    # Start with the specified amount of these items and don't place them in the world. Example: "Bomb: 1"
+    # 
+    # The game decides what the replacement items will be.
+    {}
+
+  start_hints:
+    # Start with these item's locations prefilled into the ``!hint`` command.
+    []
+
+  start_location_hints:
+    # Start with these locations and their item prefilled into the ``!hint`` command.
+    []
+
+  exclude_locations:
+    # Prevent these locations from having an important item.
+    []
+
+  priority_locations:
+    # Prevent these locations from having an unimportant item.
+    []
+
+  item_links:
+    # Share part of your item pool with other players.
+    []
+
+  plando_items:
+    # Generic items plando.
+    []
