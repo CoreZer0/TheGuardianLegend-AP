@@ -90,7 +90,7 @@ class TGLClient(BizHawkClient):
             return False
         
         ctx.game = self.game
-        ctx.items_handling = 0b011
+        ctx.items_handling = 0b111
         ctx.want_slot_data = True
 
         return True
@@ -423,6 +423,7 @@ class TGLClient(BizHawkClient):
                     if locid_bonus not in ctx.checked_locations:
                         ctx.locations_checked.add(locid_bonus)
                         checks_out.append(locid_bonus)
+                    if checks_out != []:
                         await ctx.send_msgs([{"cmd": "LocationChecks", "locations": checks_out}])
 
         except bizhawk.RequestFailedError:

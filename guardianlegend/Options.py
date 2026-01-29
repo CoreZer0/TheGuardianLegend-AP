@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Toggle, DefaultOnToggle, Choice, NamedRange, DeathLink, PerGameCommonOptions
+from Options import Toggle, DefaultOnToggle, Choice, NamedRange, DeathLink, PerGameCommonOptions, StartInventoryPool
 
 
 class BalancedRapidFire(DefaultOnToggle):
@@ -98,6 +98,7 @@ class RebalanceEnemies(Toggle):
 
 @dataclass
 class TGLOptions(PerGameCommonOptions):
+    start_inventory_from_pool: StartInventoryPool
     balanced_rapid_fire: BalancedRapidFire
     item_distribution: ItemDistribution
     item_gating: ItemGating

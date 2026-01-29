@@ -20,7 +20,7 @@ class TGLWebWorld(WebWorld):
             tutorial_name="Start Guide",
             description="A guide to playing The Guardian Legend (NES).",
             language="English",
-            file_name="guide_en.md",
+            file_name="tgl_guide_en.md",
             link="guide/en",
             authors=["CoreZero"]
         )
